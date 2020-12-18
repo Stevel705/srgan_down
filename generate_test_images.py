@@ -34,11 +34,14 @@ if TEST_MODE:
 else:
     model.load_state_dict(torch.load('epochs/' + MODEL_NAME, map_location=lambda storage, loc: storage))
 
-if not os.path.exists("../test/LR"):
-    os.makedirs("../test/LR")
+root = os.path.split(DATASET_DIR) 
+
+test_path_lr = root[0] + "/LR/"
+if not os.path.exists(test_path_lr):
+    os.makedirs(test_path_lr)
 
 
-val_set  = SRDatasetVal("../test/HR")
+val_set  = SRDatasetVal(DATASET_DIR)
 val_loader = DataLoader(dataset=val_set, num_workers=4, batch_size=1, shuffle=False)
 
 with torch.no_grad():
@@ -51,7 +54,7 @@ with torch.no_grad():
 
         lr = model(hr)
         out_img = ToPILImage()(lr[0].data.cpu())
-        out_img.save('../test/LR/' + image_file[0])
+        out_img.save(test_path_lr + image_file[0])
 
 # for image_file in os.listdir(DATASET_DIR):
 #     print(image_file)
