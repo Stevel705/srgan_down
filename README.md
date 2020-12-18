@@ -29,6 +29,9 @@ python train.py
 optional arguments:
 --crop_size                   training images crop size [default value is 88]
 --num_epochs                  train epoch number [default value is 100]
+--root_dir                    root dir with LR and HR folders
+
+For example: python train.py --crop_size 128 --num_epochs 50 --root_dir ../train
 ```
 The output val super resolution images are on `training_results` directory.
 

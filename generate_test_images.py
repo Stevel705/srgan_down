@@ -8,7 +8,6 @@ from torchvision.transforms import ToTensor, ToPILImage
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-import pytorch_ssim
 from data_utils import SRDatasetVal
 
 from model import Generator

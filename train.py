@@ -20,7 +20,7 @@ parser.add_argument('--crop_size', default=None, type=int, help='training images
 parser.add_argument('--upscale_factor', default=2, type=int, choices=[2, 4, 8],
                     help='super resolution upscale factor')
 parser.add_argument('--num_epochs', default=100, type=int, help='train epoch number')
-
+parser.add_argument('--root_dir', default='../train/', type=str, help='test HR resolution image name')
 
 if __name__ == '__main__':
     opt = parser.parse_args()
@@ -28,10 +28,12 @@ if __name__ == '__main__':
     CROP_SIZE = opt.crop_size
     UPSCALE_FACTOR = opt.upscale_factor
     NUM_EPOCHS = opt.num_epochs
-    
-    # train_set = TrainDatasetFromFolder('../train/HR', crop_size=CROP_SIZE, upscale_factor=UPSCALE_FACTOR)
-    train_set  = SRDataset("../train/HR", "../train/LR", crop_size=CROP_SIZE)
-    val_set = ValDatasetFromFolder('../train/HR', upscale_factor=UPSCALE_FACTOR)
+    ROOT_DIR = opt.root_dir
+    hr_dir = os.path.join(ROOT_DIR, "HR")
+    lr_dir = os.path.join(ROOT_DIR, "LR")
+
+    train_set  = SRDataset(hr_dir, lr_dir, crop_size=CROP_SIZE)
+    val_set = ValDatasetFromFolder(hr_dir, upscale_factor=UPSCALE_FACTOR)
     train_loader = DataLoader(dataset=train_set, num_workers=4, batch_size=1, shuffle=True)
     val_loader = DataLoader(dataset=val_set, num_workers=4, batch_size=1, shuffle=False)
     
