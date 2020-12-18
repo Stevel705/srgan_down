@@ -153,3 +153,38 @@ class TestDatasetFromFolder(Dataset):
 
     def __len__(self):
         return len(self.lr_filenames)
+
+
+
+class SRDatasetVal(Dataset):
+    def __init__(
+            self,
+            hr_dir: str,
+            crop_size: Optional[int] = None,
+            length: Optional[int] = None) -> None:
+        self._hr_dir = hr_dir
+        self._crop_size = crop_size
+        self._length = length
+
+        samples = []
+        for name in listdir(hr_dir):
+            if not name.endswith(".png"):
+                continue
+            samples.append(name)
+        self._samples = samples
+
+    def __len__(self) -> int:
+        return len(self._samples) if not self._length else self._length
+
+    def __getitem__(self, item: int) -> Tuple[torch.Tensor, torch.Tensor]:
+        name = self._samples[item % len(self._samples)]
+        hr_image = cv2.imread(os.path.join(self._hr_dir, name))
+        hr_image = cv2.cvtColor(hr_image, cv2.COLOR_BGR2RGB)
+        hr_image = torch.from_numpy(hr_image).permute(2, 0, 1).float() / 255.
+
+        if self._crop_size is not None:
+            hr_image = hr_image[
+                       :,
+                       x_start * 2:x_start * 2 + self._crop_size * 2,
+                       y_start * 2:y_start * 2 + self._crop_size * 2]
+        return hr_image, name
